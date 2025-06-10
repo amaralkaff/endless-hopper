@@ -1,0 +1,85 @@
+name: endless_hopper
+description: A classic endless hopper mobile game built with Flutter, inspired by Crossy Road and Frogger.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.6.0 <4.0.0'
+  flutter: ">=3.27.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management (Latest stable versions)
+  flutter_bloc: ^8.1.6
+  equatable: ^2.0.5
+  
+  # Data Persistence
+  shared_preferences: ^2.3.2
+  
+  # Audio
+  audioplayers: ^6.1.0
+  
+  # Haptic Feedback
+  vibration: ^2.0.0
+  
+  # UI Components
+  cupertino_icons: ^1.0.8
+  
+  # Utilities
+  collection: ^1.18.0
+  
+  # Optional: Game Engine (uncomment if using Flame)
+  # flame: ^1.12.0
+  
+  # Optional: Monetization (uncomment if implementing ads)
+  # google_mobile_ads: ^3.1.0
+  
+  # Optional: Analytics & Crash Reporting
+  # firebase_core: ^2.24.0
+  # firebase_analytics: ^10.7.0
+  # firebase_crashlytics: ^3.4.0
+  
+  # Optional: Platform Services
+  # google_sign_in: ^6.1.5
+  # sign_in_with_apple: ^5.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+    
+  # Linting
+  flutter_lints: ^4.0.0
+  
+  # Testing
+  mockito: ^5.4.4
+  bloc_test: ^9.1.7
+  
+  # Integration Testing
+  integration_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+
+  # Game Assets
+  assets:
+    - assets/images/
+    - assets/images/characters/
+    - assets/images/tiles/
+    - assets/images/obstacles/
+    - assets/images/ui/
+    - assets/audio/
+    - assets/audio/sfx/
+    - assets/audio/music/
+    - assets/fonts/
+
+  # Custom Fonts (add your custom fonts here)
+  # fonts:
+  #   - family: GameFont
+  #     fonts:
+  #       - asset: assets/fonts/GameFont-Regular.ttf
+  #       - asset: assets/fonts/GameFont-Bold.ttf
+  #         weight: 700
