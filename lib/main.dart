@@ -3,6 +3,14 @@ import 'package:flutter/services.dart';
 import 'core/assets.dart';
 import 'core/app_colors.dart';
 import 'core/app_themes.dart';
+import 'game/systems/scoring_system.dart';
+import 'game/systems/progress_tracker.dart';
+import 'game/widgets/score_display.dart';
+import 'game/widgets/score_overlay.dart';
+import 'game/entities/player.dart';
+import 'game/entities/obstacle.dart';
+import 'presentation/screens/progress_screen.dart';
+
 
 void main() {
   // Ensure Flutter binding is initialized
@@ -185,22 +193,49 @@ class MainMenuScreen extends StatelessWidget {
               
               const SizedBox(height: 20),
               
-              // Settings button
-              OutlinedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const SettingsScreen(),
+              // Navigation buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const ProgressScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'PROGRESS',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
-                  );
-                },
-                child: const Text(
-                  'SETTINGS',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
                   ),
-                ),
+                  
+                  const SizedBox(width: 12),
+                  
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const SettingsScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'SETTINGS',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               
               const SizedBox(height: 60),
@@ -233,76 +268,102 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
-  int score = 0;
+  late final ProgressTracker _progressTracker;
+  late final ScoringSystem _scoringSystem;
   bool isPlaying = true;
+  int _hopCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _progressTracker = ProgressTracker();
+    _scoringSystem = ScoringSystem(progressTracker: _progressTracker);
+    _scoringSystem.startNewSession();
+  }
+
+  @override
+  void dispose() {
+    _scoringSystem.dispose();
+    _progressTracker.dispose();
+    super.dispose();
+  }
 
   void _onTap() {
     if (!isPlaying) return;
     
     setState(() {
-      score++;
+      _hopCount++;
     });
     
-    // TODO: Implement actual game logic
-    // For now, just increment score
+    // Simulate game mechanics with scoring system
+    // TODO: Replace with actual game logic
     
-    // Simulate game over at score 20 for testing
-    if (score >= 20) {
+    // Simulate distance progress
+    _scoringSystem.updateDistance(MockPlayer(_hopCount));
+    
+    // Simulate various score events randomly
+    if (_hopCount % 3 == 0) {
+      _scoringSystem.recordHop(
+        MockPlayer(_hopCount), 
+        [], // No obstacles for now
+        null, // No current tile for now
+      );
+    }
+    
+    // Simulate dangerous hop occasionally
+    if (_hopCount % 7 == 0) {
+      _scoringSystem.recordNearMiss(
+        MockPlayer(_hopCount),
+        MockObstacle(_hopCount * 48.0, _hopCount * 48.0),
+      );
+    }
+    
+    // Simulate game over at score 500 for testing
+    if (_scoringSystem.currentScore >= 500) {
       _gameOver();
     }
   }
 
-  void _gameOver() {
+  void _gameOver() async {
     setState(() {
       isPlaying = false;
     });
     
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => GameOverScreen(score: score),
-      ),
-    );
+    await _scoringSystem.endSession();
+    
+    if (mounted) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => GameOverScreen(scoringSystem: _scoringSystem),
+        ),
+      );
+    }
+  }
+
+  void _pauseGame() {
+    setState(() {
+      isPlaying = false;
+    });
+    // TODO: Implement pause logic
+  }
+
+  void _resumeGame() {
+    setState(() {
+      isPlaying = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.grassGreenLight,
-      body: SafeArea(
-        child: Column(
+      body: ScoreOverlay(
+        scoringSystem: _scoringSystem,
+        showScorePopups: true,
+        child: Stack(
           children: [
-            // Score display
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.arrow_back),
-                    color: AppColors.textPrimary,
-                  ),
-                  Text(
-                    'Score: $score',
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      // TODO: Implement pause
-                    },
-                    icon: const Icon(Icons.pause),
-                    color: AppColors.textPrimary,
-                  ),
-                ],
-              ),
-            ),
-            
             // Game area
-            Expanded(
+            Positioned.fill(
               child: GestureDetector(
                 onTap: _onTap,
                 child: Container(
@@ -331,10 +392,18 @@ class _GameScreenState extends State<GameScreen> {
                           ),
                         ),
                         const SizedBox(height: 10),
-                        const Text(
-                          'Game engine coming soon...',
-                          style: TextStyle(
+                        Text(
+                          'Score: ${_scoringSystem.currentScore} | Distance: ${_scoringSystem.currentDistance}m',
+                          style: const TextStyle(
                             fontSize: 16,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          'Hops: $_hopCount | Streak: ${_scoringSystem.currentStreak}',
+                          style: const TextStyle(
+                            fontSize: 14,
                             color: AppColors.textSecondary,
                           ),
                         ),
@@ -344,6 +413,15 @@ class _GameScreenState extends State<GameScreen> {
                 ),
               ),
             ),
+            
+            // Game HUD overlay
+            GameHUD(
+              scoringSystem: _scoringSystem,
+              onBack: () => Navigator.of(context).pop(),
+              onPause: isPlaying ? _pauseGame : _resumeGame,
+              showBackButton: true,
+              showPauseButton: true,
+            ),
           ],
         ),
       ),
@@ -352,19 +430,25 @@ class _GameScreenState extends State<GameScreen> {
 }
 
 class GameOverScreen extends StatelessWidget {
-  final int score;
+  final ScoringSystem scoringSystem;
   
-  const GameOverScreen({super.key, required this.score});
+  const GameOverScreen({super.key, required this.scoringSystem});
 
   @override
   Widget build(BuildContext context) {
+    final score = scoringSystem.currentScore;
+    final distance = scoringSystem.currentDistance;
+    final isNewRecord = scoringSystem.isNewHighScore;
+    
     return Scaffold(
       backgroundColor: AppColors.backgroundMedium,
       body: SafeArea(
-        child: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const SizedBox(height: 40),
+              
               // Game Over icon
               SizedBox(
                 width: 120,
@@ -372,87 +456,129 @@ class GameOverScreen extends StatelessWidget {
                 child: Image.asset(
                   GameAssets.teddyBear,
                   fit: BoxFit.contain,
-                  color: AppColors.error.withValues(alpha: 0.7),
+                  color: isNewRecord 
+                    ? AppColors.accentYellow.withValues(alpha: 0.8)
+                    : AppColors.error.withValues(alpha: 0.7),
                 ),
               ),
+              
               const SizedBox(height: 24),
-              const Text(
-                'GAME OVER',
+              
+              Text(
+                isNewRecord ? 'NEW RECORD!' : 'GAME OVER',
                 style: TextStyle(
                   fontSize: 36,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.error,
+                  color: isNewRecord ? AppColors.accentYellow : AppColors.error,
                 ),
               ),
-              const SizedBox(height: 16),
               
-              // Score display
-              Text(
-                'Final Score: $score',
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
+              const SizedBox(height: 32),
+              
+              // Score display with details
+              ScoreDisplay(
+                scoringSystem: scoringSystem,
+                showHighScore: true,
+                compact: false,
               ),
-              const SizedBox(height: 8),
+              
+              const SizedBox(height: 20),
+              
+              // Score comparison
+              if (scoringSystem.highScore > 0) ...[
+                ScoreComparisonWidget(
+                  currentScore: score,
+                  previousBest: scoringSystem.highScore,
+                  isNewRecord: isNewRecord,
+                ),
+                const SizedBox(height: 20),
+              ],
+              
+              // Statistics display
+              StatisticsDisplay(
+                scoringSystem: scoringSystem,
+                showAllTime: false,
+              ),
+              
+              const SizedBox(height: 20),
+              
+              // Leaderboard
+              LeaderboardDisplay(
+                scoringSystem: scoringSystem,
+                maxEntries: 5,
+              ),
+              
+              const SizedBox(height: 32),
               
               // Encouraging message
               Text(
-                score >= 15 ? 'Great job! 🎉' : 
-                score >= 10 ? 'Not bad! 👍' : 
-                'Keep trying! 💪',
+                _getEncouragingMessage(score, distance),
+                textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 18,
                   color: AppColors.textSecondary,
                 ),
               ),
               
-              const SizedBox(height: 60),
+              const SizedBox(height: 40),
               
-              // Play Again button
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) => const GameScreen(),
+              // Action buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => const GameScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'PLAY AGAIN',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
-                  );
-                },
-                child: const Text(
-                  'PLAY AGAIN',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
                   ),
-                ),
-              ),
-              
-              const SizedBox(height: 20),
-              
-              // Main Menu button
-              OutlinedButton(
-                onPressed: () {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (context) => const MainMenuScreen(),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (context) => const MainMenuScreen(),
+                          ),
+                          (route) => false,
+                        );
+                      },
+                      child: const Text(
+                        'MAIN MENU',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
-                    (route) => false,
-                  );
-                },
-                child: const Text(
-                  'MAIN MENU',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
                   ),
-                ),
+                ],
               ),
             ],
           ),
         ),
       ),
     );
+  }
+  
+  String _getEncouragingMessage(int score, int distance) {
+    if (score >= 400) return 'Incredible performance! You\'re a hopping legend! 🏆';
+    if (score >= 300) return 'Outstanding! You\'ve mastered the art of hopping! 🎯';
+    if (score >= 200) return 'Excellent work! You\'re becoming a pro hopper! 🌟';
+    if (score >= 100) return 'Great job! Keep up the fantastic hopping! 🎉';
+    if (score >= 50) return 'Nice work! You\'re getting the hang of it! 👍';
+    return 'Keep trying! Every hop gets you closer to greatness! 💪';
   }
 }
 
@@ -635,6 +761,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+// Mock classes for testing the scoring system
+class MockPlayer extends Player {
+  MockPlayer(int gridY) : super(
+    x: 0.0,
+    y: gridY * 48.0, // Assuming 48px tile size
+    initialGridX: 0,
+    initialGridY: gridY,
+  );
+}
+
+class MockObstacle extends Obstacle {
+  const MockObstacle(double x, double y) : super(
+    x: x,
+    y: y,
+    width: 48.0,
+    height: 32.0,
+    type: ObstacleType.car,
+    speed: 50.0,
+    direction: 1,
+  );
+  
+  @override
+  String get assetPath => 'assets/Package/Sprites/Game Objects/Obstacle_1.png';
+  
+  @override
+  bool get isDeadly => true;
+  
+  @override
+  bool get isRideable => false;
+  
+  @override
+  Obstacle copyWith({double? x, double? y}) {
+    return MockObstacle(
+      x ?? this.x,
+      y ?? this.y,
     );
   }
 }

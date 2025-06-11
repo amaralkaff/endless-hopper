@@ -13,6 +13,10 @@ class AppColors {
   static const Color accentPinkDark = Color(0xFFD68181);     // Deeper pink
   static const Color accentPinkLight = Color(0xFFF0C4C4);    // Light pink
   
+  static const Color accentYellow = Color(0xFFFFE66D);       // Soft yellow accent
+  static const Color accentYellowDark = Color(0xFFFFD93D);   // Deeper yellow
+  static const Color accentYellowLight = Color(0xFFFFF2A1);  // Light yellow
+  
   // === PIXEL ART CHARACTER COLORS ===
   // Teddy Bear colors (warm browns and cream)
   static const Color teddyBrown = Color(0xFFB8860B);         // Golden brown

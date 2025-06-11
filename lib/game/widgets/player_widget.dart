@@ -71,7 +71,6 @@ class PlayerCustomPainter extends CustomPainter {
       ..color = Colors.blue
       ..style = PaintingStyle.fill;
     
-    // Draw collision bounds for debugging (optional)
     // if (false) { // Set to true for debugging
     //   final debugPaint = Paint()
     //     ..color = Colors.red.withValues(alpha: 0.3)
