@@ -98,7 +98,7 @@ class _SplashScreenState extends State<SplashScreen>
                 height: 120,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withValues(alpha: 0.1),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(20),
@@ -313,7 +313,7 @@ class _GameScreenState extends State<GameScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         // Teddy Bear Character
-                        Container(
+                        SizedBox(
                           width: 80,
                           height: 80,
                           child: Image.asset(
@@ -366,13 +366,13 @@ class GameOverScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Game Over icon
-              Container(
+              SizedBox(
                 width: 120,
                 height: 120,
                 child: Image.asset(
                   GameAssets.teddyBear,
                   fit: BoxFit.contain,
-                  color: AppColors.error.withOpacity(0.7),
+                  color: AppColors.error.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 24),

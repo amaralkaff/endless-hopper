@@ -18,20 +18,20 @@ class PixelArtThemes {
       fontFamily: 'Roboto', // Can be changed to pixel font later
       
       // App Bar Theme - Purple gradient style
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.primaryPurple,
         foregroundColor: AppColors.textLight,
         elevation: 0, // Flat design for pixel art
         centerTitle: true,
         systemOverlayStyle: SystemUiOverlayStyle.light,
-        titleTextStyle: const TextStyle(
+        titleTextStyle: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
           color: AppColors.textLight,
           letterSpacing: 1.2,
         ),
         toolbarHeight: 56,
-        shape: const RoundedRectangleBorder(
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(16),
             bottomRight: Radius.circular(16),
@@ -360,19 +360,19 @@ class PixelArtThemes {
       // Dark theme styling with pixel art aesthetics
       fontFamily: 'Roboto',
       
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.backgroundDark,
         foregroundColor: AppColors.textLight,
         elevation: 0,
         centerTitle: true,
         systemOverlayStyle: SystemUiOverlayStyle.light,
-        titleTextStyle: const TextStyle(
+        titleTextStyle: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
           color: AppColors.textLight,
           letterSpacing: 1.2,
         ),
-        shape: const RoundedRectangleBorder(
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(16),
             bottomRight: Radius.circular(16),

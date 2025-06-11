@@ -52,7 +52,7 @@ class CollisionSystem {
   }
 
   static Rect getTileBounds(Tile tile) {
-    final tileSize = GameConstants.tileSize;
+    const tileSize = GameConstants.tileSize;
     return Rect.fromLTWH(
       tile.x * tileSize,
       tile.y * tileSize,
@@ -181,7 +181,7 @@ class CollisionSystem {
   }
 
   static bool isPlayerOnTile(Player player, Tile tile) {
-    final tileSize = GameConstants.tileSize;
+    const tileSize = GameConstants.tileSize;
     final tileX = tile.x * tileSize;
     final tileY = tile.y * tileSize;
     

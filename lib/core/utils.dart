@@ -171,7 +171,7 @@ class GameUtils {
     final stopwatch = Stopwatch()..start();
     function();
     stopwatch.stop();
-    print('Performance: $operation took ${stopwatch.elapsedMilliseconds}ms');
+    debugPrint('Performance: $operation took ${stopwatch.elapsedMilliseconds}ms');
   }
   
   // Clamp values

@@ -35,8 +35,8 @@ class ObstacleWidget extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border.all(
           color: obstacle.isDeadly 
-            ? Colors.red.withOpacity(0.3)
-            : Colors.blue.withOpacity(0.3),
+            ? Colors.red.withValues(alpha: 0.3)
+            : Colors.blue.withValues(alpha: 0.3),
           width: 2,
         ),
         borderRadius: BorderRadius.circular(4),

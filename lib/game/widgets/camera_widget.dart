@@ -49,7 +49,7 @@ class _CameraWidgetState extends State<CameraWidget>
   }
 
   void _updateCamera() {
-    final deltaTime = 1.0 / 60.0; // Assume 60 FPS
+    const deltaTime = 1.0 / 60.0; // Assume 60 FPS
     widget.cameraSystem.update(deltaTime, widget.player);
     widget.cameraSystem.ensurePlayerInView(widget.player);
   }
@@ -88,16 +88,16 @@ class _CameraWidgetState extends State<CameraWidget>
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.7),
+          color: Colors.black.withValues(alpha: 0.7),
           borderRadius: BorderRadius.circular(4),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
+            const Text(
               'Camera Debug',
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 12,

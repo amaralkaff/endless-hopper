@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../entities/player.dart';
-import '../../core/constants.dart';
 
 enum CameraMode {
   follow,
@@ -180,7 +179,7 @@ class CameraSystem {
   // Ensure player is always in view
   void ensurePlayerInView(Player player) {
     final playerScreenPos = worldToScreen(Offset(player.x, player.y));
-    final margin = 50.0; // Minimum distance from screen edge
+    const margin = 50.0; // Minimum distance from screen edge
     
     bool needsAdjustment = false;
     Offset adjustment = Offset.zero;
@@ -221,10 +220,7 @@ class CameraSystem {
   void shake({double intensity = 10.0, Duration duration = const Duration(milliseconds: 300)}) {
     // Note: This would need animation controller integration
     // For now, just apply immediate offset
-    final shakeOffset = Offset(
-      (intensity * 2) * (0.5 - 0.5), // Random shake
-      (intensity * 2) * (0.5 - 0.5),
-    );
+    const shakeOffset = Offset(0, 0); // Placeholder for shake effect
     moveBy(shakeOffset);
   }
 
