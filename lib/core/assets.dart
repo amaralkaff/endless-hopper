@@ -18,6 +18,11 @@ class GameAssets {
   static const String runAnimation = '$_animationsPath/Run.png';
   static const String jumpAnimation = '$_animationsPath/Jump.png';
   static const String deathAnimation = '$_animationsPath/Death.png';
+  
+  // Animation getters for compatibility
+  static String get animationRun => runAnimation;
+  static String get animationJump => jumpAnimation;
+  static String get animationDeath => deathAnimation;
 
   /// 🖱️ UI Elements  
   static const String playButton = '$_spritesPath/UI Elements/Play_Button.png';

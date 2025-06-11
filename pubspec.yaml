@@ -76,16 +76,9 @@ flutter:
     # Audio Assets
     - assets/Sounds/
     
-    # Legacy asset structure (keep for backward compatibility)
+    # Additional asset directories (optional)
     - assets/images/
-    - assets/images/characters/
-    - assets/images/tiles/
-    - assets/images/obstacles/
-    - assets/images/ui/
     - assets/audio/
-    - assets/audio/sfx/
-    - assets/audio/music/
-    - assets/fonts/
 
   # Custom Fonts (add your custom fonts here)
   # fonts:
