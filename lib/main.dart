@@ -191,10 +191,9 @@ class MainMenuScreen extends StatelessWidget {
               // Settings button
               OutlinedButton(
                 onPressed: () {
-                  // TODO: Navigate to settings
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Settings coming soon!'),
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const SettingsScreen(),
                     ),
                   );
                 },
@@ -260,6 +259,23 @@ class _GameScreenState extends State<GameScreen> {
     
     // TODO: Implement actual game logic
     // For now, just increment score
+    
+    // Simulate game over at score 20 for testing
+    if (score >= 20) {
+      _gameOver();
+    }
+  }
+
+  void _gameOver() {
+    setState(() {
+      isPlaying = false;
+    });
+    
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => GameOverScreen(score: score),
+      ),
+    );
   }
 
   @override
@@ -336,6 +352,321 @@ class _GameScreenState extends State<GameScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class GameOverScreen extends StatelessWidget {
+  final int score;
+  
+  const GameOverScreen({super.key, required this.score});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.red.shade50,
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Game Over title
+              const Icon(
+                Icons.sentiment_dissatisfied,
+                size: 120,
+                color: Colors.red,
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'GAME OVER',
+                style: TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
+              ),
+              const SizedBox(height: 16),
+              
+              // Score display
+              Text(
+                'Final Score: $score',
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 8),
+              
+              // Encouraging message
+              Text(
+                score >= 15 ? 'Great job! 🎉' : 
+                score >= 10 ? 'Not bad! 👍' : 
+                'Keep trying! 💪',
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.grey,
+                ),
+              ),
+              
+              const SizedBox(height: 60),
+              
+              // Play Again button
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => const GameScreen(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 48,
+                    vertical: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                child: const Text(
+                  'PLAY AGAIN',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              
+              const SizedBox(height: 20),
+              
+              // Main Menu button
+              OutlinedButton(
+                onPressed: () {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) => const MainMenuScreen(),
+                    ),
+                    (route) => false,
+                  );
+                },
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.grey,
+                  side: const BorderSide(color: Colors.grey),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                ),
+                child: const Text(
+                  'MAIN MENU',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  bool soundEnabled = true;
+  bool musicEnabled = true;
+  bool vibrationEnabled = true;
+  double gameSpeed = 1.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.blue.shade50,
+      appBar: AppBar(
+        title: const Text(
+          'Settings',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.blue.shade100,
+        elevation: 0,
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Audio Settings Section
+              const Text(
+                'Audio',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
+              ),
+              const SizedBox(height: 16),
+              
+              // Sound Effects Toggle
+              Card(
+                child: SwitchListTile(
+                  title: const Text('Sound Effects'),
+                  subtitle: const Text('Game sound effects'),
+                  value: soundEnabled,
+                  onChanged: (value) {
+                    setState(() {
+                      soundEnabled = value;
+                    });
+                  },
+                  activeColor: Colors.green,
+                ),
+              ),
+              
+              // Background Music Toggle
+              Card(
+                child: SwitchListTile(
+                  title: const Text('Background Music'),
+                  subtitle: const Text('Game background music'),
+                  value: musicEnabled,
+                  onChanged: (value) {
+                    setState(() {
+                      musicEnabled = value;
+                    });
+                  },
+                  activeColor: Colors.green,
+                ),
+              ),
+              
+              const SizedBox(height: 32),
+              
+              // Gameplay Settings Section
+              const Text(
+                'Gameplay',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
+              ),
+              const SizedBox(height: 16),
+              
+              // Vibration Toggle
+              Card(
+                child: SwitchListTile(
+                  title: const Text('Vibration'),
+                  subtitle: const Text('Haptic feedback'),
+                  value: vibrationEnabled,
+                  onChanged: (value) {
+                    setState(() {
+                      vibrationEnabled = value;
+                    });
+                  },
+                  activeColor: Colors.green,
+                ),
+              ),
+              
+              // Game Speed Slider
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Game Speed',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Text('Slow'),
+                          Expanded(
+                            child: Slider(
+                              value: gameSpeed,
+                              min: 0.5,
+                              max: 2.0,
+                              divisions: 6,
+                              label: '${gameSpeed.toStringAsFixed(1)}x',
+                              onChanged: (value) {
+                                setState(() {
+                                  gameSpeed = value;
+                                });
+                              },
+                              activeColor: Colors.green,
+                            ),
+                          ),
+                          const Text('Fast'),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              
+              const Spacer(),
+              
+              // Reset to Defaults button
+              Center(
+                child: OutlinedButton(
+                  onPressed: () {
+                    setState(() {
+                      soundEnabled = true;
+                      musicEnabled = true;
+                      vibrationEnabled = true;
+                      gameSpeed = 1.0;
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Settings reset to defaults'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.orange,
+                    side: const BorderSide(color: Colors.orange),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
+                  child: const Text(
+                    'Reset to Defaults',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+              
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );
