@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'core/assets.dart';
+import 'core/app_colors.dart';
+import 'core/app_themes.dart';
 
 void main() {
   // Ensure Flutter binding is initialized
@@ -23,14 +26,9 @@ class EndlessHopperApp extends StatelessWidget {
     return MaterialApp(
       title: 'Endless Hopper',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.green,
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-        fontFamily: 'Roboto',
-      ),
+      theme: PixelArtThemes.lightTheme,
+      darkTheme: PixelArtThemes.darkTheme,
+      themeMode: ThemeMode.system,
       home: const SplashScreen(),
     );
   }
@@ -87,35 +85,45 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green.shade400,
+      backgroundColor: AppColors.primaryPurple,
       body: FadeTransition(
         opacity: _fadeAnimation,
-        child: const Center(
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Game logo/icon placeholder
-              Icon(
-                Icons.pets, // Frog emoji alternative
-                size: 120,
-                color: Colors.white,
+              // Game logo/icon
+              Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.white.withOpacity(0.1),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Image.asset(
+                    GameAssets.teddyMark,
+                    fit: BoxFit.contain,
+                  ),
+                ),
               ),
-              SizedBox(height: 24),
-              Text(
+              const SizedBox(height: 24),
+              const Text(
                 'ENDLESS HOPPER',
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: AppColors.textLight,
                   letterSpacing: 2,
                 ),
               ),
-              SizedBox(height: 8),
-              Text(
-                '🐸 Hop your way to infinity!',
+              const SizedBox(height: 8),
+              const Text(
+                '🧸 Hop your way to infinity!',
                 style: TextStyle(
                   fontSize: 18,
-                  color: Colors.white70,
+                  color: AppColors.textLight,
                 ),
               ),
             ],
@@ -132,7 +140,7 @@ class MainMenuScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightBlue.shade50,
+      backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
         child: Center(
           child: Column(
@@ -144,15 +152,15 @@ class MainMenuScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 36,
                   fontWeight: FontWeight.bold,
-                  color: Colors.green,
+                  color: AppColors.primaryPurple,
                 ),
               ),
               const SizedBox(height: 8),
               const Text(
-                '🐸 Ready to hop?',
+                '🧸 Ready to hop?',
                 style: TextStyle(
                   fontSize: 20,
-                  color: Colors.green,
+                  color: AppColors.primaryPurple,
                 ),
               ),
               const SizedBox(height: 60),
@@ -166,17 +174,6 @@ class MainMenuScreen extends StatelessWidget {
                     ),
                   );
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 48,
-                    vertical: 16,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
                 child: const Text(
                   'PLAY',
                   style: TextStyle(
@@ -197,17 +194,6 @@ class MainMenuScreen extends StatelessWidget {
                     ),
                   );
                 },
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.green,
-                  side: const BorderSide(color: Colors.green),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                ),
                 child: const Text(
                   'SETTINGS',
                   style: TextStyle(
@@ -227,7 +213,7 @@ class MainMenuScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.grey,
+                    color: AppColors.textSecondary,
                   ),
                 ),
               ),
@@ -281,7 +267,7 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightGreen.shade100,
+      backgroundColor: AppColors.grassGreenLight,
       body: SafeArea(
         child: Column(
           children: [
@@ -294,12 +280,14 @@ class _GameScreenState extends State<GameScreen> {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.arrow_back),
+                    color: AppColors.textPrimary,
                   ),
                   Text(
                     'Score: $score',
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                   IconButton(
@@ -307,6 +295,7 @@ class _GameScreenState extends State<GameScreen> {
                       // TODO: Implement pause
                     },
                     icon: const Icon(Icons.pause),
+                    color: AppColors.textPrimary,
                   ),
                 ],
               ),
@@ -319,30 +308,34 @@ class _GameScreenState extends State<GameScreen> {
                 child: Container(
                   width: double.infinity,
                   color: Colors.transparent,
-                  child: const Center(
+                  child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.pets,
-                          size: 80,
-                          color: Colors.green,
+                        // Teddy Bear Character
+                        Container(
+                          width: 80,
+                          height: 80,
+                          child: Image.asset(
+                            GameAssets.teddyBear,
+                            fit: BoxFit.contain,
+                          ),
                         ),
-                        SizedBox(height: 20),
-                        Text(
+                        const SizedBox(height: 20),
+                        const Text(
                           'TAP TO HOP!',
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Colors.green,
+                            color: AppColors.primaryPurple,
                           ),
                         ),
-                        SizedBox(height: 10),
-                        Text(
+                        const SizedBox(height: 10),
+                        const Text(
                           'Game engine coming soon...',
                           style: TextStyle(
                             fontSize: 16,
-                            color: Colors.grey,
+                            color: AppColors.textSecondary,
                           ),
                         ),
                       ],
@@ -366,17 +359,21 @@ class GameOverScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.red.shade50,
+      backgroundColor: AppColors.backgroundMedium,
       body: SafeArea(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Game Over title
-              const Icon(
-                Icons.sentiment_dissatisfied,
-                size: 120,
-                color: Colors.red,
+              // Game Over icon
+              Container(
+                width: 120,
+                height: 120,
+                child: Image.asset(
+                  GameAssets.teddyBear,
+                  fit: BoxFit.contain,
+                  color: AppColors.error.withOpacity(0.7),
+                ),
               ),
               const SizedBox(height: 24),
               const Text(
@@ -384,7 +381,7 @@ class GameOverScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 36,
                   fontWeight: FontWeight.bold,
-                  color: Colors.red,
+                  color: AppColors.error,
                 ),
               ),
               const SizedBox(height: 16),
@@ -395,7 +392,7 @@ class GameOverScreen extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
-                  color: Colors.grey,
+                  color: AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 8),
@@ -407,7 +404,7 @@ class GameOverScreen extends StatelessWidget {
                 'Keep trying! 💪',
                 style: const TextStyle(
                   fontSize: 18,
-                  color: Colors.grey,
+                  color: AppColors.textSecondary,
                 ),
               ),
               
@@ -422,17 +419,6 @@ class GameOverScreen extends StatelessWidget {
                     ),
                   );
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 48,
-                    vertical: 16,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
                 child: const Text(
                   'PLAY AGAIN',
                   style: TextStyle(
@@ -454,17 +440,6 @@ class GameOverScreen extends StatelessWidget {
                     (route) => false,
                   );
                 },
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.grey,
-                  side: const BorderSide(color: Colors.grey),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                ),
                 child: const Text(
                   'MAIN MENU',
                   style: TextStyle(
@@ -497,7 +472,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue.shade50,
+      backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
         title: const Text(
           'Settings',
@@ -505,8 +480,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.blue.shade100,
-        elevation: 0,
       ),
       body: SafeArea(
         child: Padding(
@@ -520,7 +493,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue,
+                  color: AppColors.primaryPurple,
                 ),
               ),
               const SizedBox(height: 16),
@@ -536,7 +509,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       soundEnabled = value;
                     });
                   },
-                  activeColor: Colors.green,
+                  activeColor: AppColors.accentPink,
                 ),
               ),
               
@@ -551,7 +524,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       musicEnabled = value;
                     });
                   },
-                  activeColor: Colors.green,
+                  activeColor: AppColors.accentPink,
                 ),
               ),
               
@@ -563,7 +536,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue,
+                  color: AppColors.primaryPurple,
                 ),
               ),
               const SizedBox(height: 16),
@@ -579,7 +552,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       vibrationEnabled = value;
                     });
                   },
-                  activeColor: Colors.green,
+                  activeColor: AppColors.accentPink,
                 ),
               ),
               
@@ -613,7 +586,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   gameSpeed = value;
                                 });
                               },
-                              activeColor: Colors.green,
+                              activeColor: AppColors.primaryPurple,
                             ),
                           ),
                           const Text('Fast'),
@@ -644,15 +617,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     );
                   },
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.orange,
-                    side: const BorderSide(color: Colors.orange),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 12,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
-                    ),
+                    foregroundColor: AppColors.warning,
+                    side: const BorderSide(color: AppColors.warning),
                   ),
                   child: const Text(
                     'Reset to Defaults',

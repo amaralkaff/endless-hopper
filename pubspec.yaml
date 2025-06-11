@@ -66,6 +66,17 @@ flutter:
 
   # Game Assets
   assets:
+    # New Pixel Art Assets
+    - assets/Package/
+    - assets/Package/Sprites/
+    - assets/Package/Sprites/Game Objects/
+    - assets/Package/Sprites/UI Elements/
+    - assets/Package/Animations/
+    
+    # Audio Assets
+    - assets/Sounds/
+    
+    # Legacy asset structure (keep for backward compatibility)
     - assets/images/
     - assets/images/characters/
     - assets/images/tiles/
